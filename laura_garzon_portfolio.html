@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laura Juliana Garzón — Ingeniería de Sistemas</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --accent: #7fffb2;
+    --accent2: #5fd4ff;
+    --accent3: #ff7eb3;
+    --text: #e8e8f0;
+    --muted: #6b6b82;
+    --border: #2a2a3a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── AMBIENT GLOWS ── */
+  .glow-1, .glow-2, .glow-3 {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-1 { width: 600px; height: 600px; background: rgba(127,255,178,0.06); top: -200px; right: -100px; }
+  .glow-2 { width: 500px; height: 500px; background: rgba(95,212,255,0.05); bottom: 100px; left: -150px; }
+  .glow-3 { width: 400px; height: 400px; background: rgba(255,126,179,0.04); top: 50%; left: 40%; }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* ── HEADER / HERO ── */
+  header {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 80px 0;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.2s;
+  }
+
+  .hero-tag::before {
+    content: '//';
+    margin-right: 8px;
+    opacity: 0.5;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    line-height: 1.0;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.4s;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    margin-top: 24px;
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 460px;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.6s;
+  }
+
+  .hero-contacts {
+    margin-top: 40px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.8s;
+  }
+
+  .contact-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.3s;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .contact-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(127,255,178,0.05);
+    transform: translateY(-2px);
+  }
+
+  .contact-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* RIGHT SIDE VISUAL */
+  .hero-visual {
+    opacity: 0;
+    animation: fadeIn 1.2s forwards 0.6s;
+  }
+
+  .terminal-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+  }
+
+  .terminal-bar {
+    background: var(--surface);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tb-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .tb-dot:nth-child(1) { background: #ff5f57; }
+  .tb-dot:nth-child(2) { background: #febc2e; }
+  .tb-dot:nth-child(3) { background: #28c840; }
+  .tb-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .terminal-body {
+    padding: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .t-comment { color: var(--muted); }
+  .t-key { color: var(--accent2); }
+  .t-val { color: var(--text); }
+  .t-str { color: var(--accent); }
+  .t-arr { color: var(--accent3); }
+  .t-num { color: #ff9966; }
+  .t-line { display: block; }
+  .t-indent { padding-left: 20px; }
+  .t-indent2 { padding-left: 40px; }
+
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 16px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 100px 0; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 60px;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    opacity: 0.6;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(127,255,178,0.04), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .skill-card:hover { border-color: rgba(127,255,178,0.3); transform: translateY(-4px); }
+  .skill-card:hover::before { opacity: 1; }
+
+  .skill-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .skill-bar-bg {
+    height: 3px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .skill-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .skill-card.visible .skill-bar-fill { transform: scaleX(1); }
+
+  .skill-level {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .project-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+
+  .project-card:hover { border-color: rgba(127,255,178,0.25); transform: translateY(-4px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+  .project-card:hover::after { transform: scaleX(1); }
+
+  .project-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+    display: inline-block;
+  }
+
+  .badge-gold { background: rgba(255,215,0,0.1); color: #ffd700; border: 1px solid rgba(255,215,0,0.2); }
+  .badge-blue { background: rgba(95,212,255,0.1); color: var(--accent2); border: 1px solid rgba(95,212,255,0.2); }
+  .badge-pink { background: rgba(255,126,179,0.1); color: var(--accent3); border: 1px solid rgba(255,126,179,0.2); }
+  .badge-green { background: rgba(127,255,178,0.1); color: var(--accent); border: 1px solid rgba(127,255,178,0.2); }
+
+  .project-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .project-tags {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+  }
+
+  .project-award {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .award-icon {
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .award-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── EXPERIENCE ── */
+  .exp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: center;
+    transition: all 0.3s;
+  }
+
+  .exp-card:hover { border-color: rgba(95,212,255,0.3); }
+
+  .exp-icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    background: rgba(95,212,255,0.08);
+    border: 1px solid rgba(95,212,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  .exp-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .exp-company {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    margin-bottom: 16px;
+  }
+
+  .exp-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  /* ── SOFT SKILLS ── */
+  .soft-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .soft-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .soft-card:hover { border-color: rgba(255,126,179,0.3); transform: translateY(-4px); }
+
+  .soft-icon { font-size: 1.8rem; margin-bottom: 12px; }
+  .soft-label { font-size: 0.85rem; color: var(--muted); line-height: 1.4; }
+
+  /* ── EDUCATION ── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s;
+  }
+
+  .edu-card:hover { border-color: rgba(127,255,178,0.2); }
+
+  .edu-period {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .edu-degree {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .edu-inst {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    text-align: center;
+  }
+
+  .footer-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .footer-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-visual { display: none; }
+    .skills-grid { grid-template-columns: repeat(2, 1fr); }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-column: 1; display: block; }
+    .project-award { margin-top: 20px; text-align: left; }
+    .soft-grid { grid-template-columns: repeat(2, 1fr); }
+    .edu-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+<div class="glow-3"></div>
+
+<!-- HERO -->
+<header>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <p class="hero-tag">Ingeniería de Sistemas · Bogotá, Colombia</p>
+        <h1>Laura<br><em>Garzón</em><br>Arias</h1>
+        <p class="hero-subtitle">Estudiante de séptimo semestre en la Pontificia Universidad Javeriana. Constructora de soluciones completas: de la base de datos a la interfaz, de la idea al producto terminado.</p>
+        <div class="hero-contacts">
+          <a href="tel:3125931182" class="contact-pill">
+            <span class="dot"></span> 312 593 1182
+          </a>
+          <a href="mailto:jlaurag453@gmail.com" class="contact-pill">
+            <span class="dot" style="background:var(--accent2)"></span> jlaurag453@gmail.com
+          </a>
+          <a href="https://github.com/garzonlj" target="_blank" class="contact-pill">
+            <span class="dot" style="background:var(--accent3)"></span> github.com/garzonlj
+          </a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="terminal-card">
+          <div class="terminal-bar">
+            <span class="tb-dot"></span>
+            <span class="tb-dot"></span>
+            <span class="tb-dot"></span>
+            <span class="tb-label">laura.json</span>
+          </div>
+          <div class="terminal-body">
+            <span class="t-line t-comment">// perfil profesional</span>
+            <span class="t-line">{</span>
+            <span class="t-line t-indent"><span class="t-key">"nombre"</span>: <span class="t-str">"Laura Garzón"</span>,</span>
+            <span class="t-line t-indent"><span class="t-key">"rol"</span>: <span class="t-str">"Systems Engineer"</span>,</span>
+            <span class="t-line t-indent"><span class="t-key">"semestre"</span>: <span class="t-num">7</span>,</span>
+            <span class="t-line t-indent"><span class="t-key">"awards"</span>: <span class="t-arr">[</span></span>
+            <span class="t-line t-indent2"><span class="t-str">"🏆 Ganadora Expoproyectos 2025"</span>,</span>
+            <span class="t-line t-indent2"><span class="t-str">"🚀 NASA Robot Concurso"</span></span>
+            <span class="t-line t-indent"><span class="t-arr">]</span>,</span>
+            <span class="t-line t-indent"><span class="t-key">"intereses"</span>: <span class="t-arr">[</span></span>
+            <span class="t-line t-indent2"><span class="t-str">"Ciberseguridad"</span>,</span>
+            <span class="t-line t-indent2"><span class="t-str">"Full Stack Dev"</span>,</span>
+            <span class="t-line t-indent2"><span class="t-str">"IoT & Sistemas"</span></span>
+            <span class="t-line t-indent"><span class="t-arr">]</span>,</span>
+            <span class="t-line t-indent"><span class="t-key">"disponible"</span>: <span class="t-str" style="color:#7fffb2">true</span></span>
+            <span class="t-line">} <span class="cursor"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- LENGUAJES -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2>Tecnologías</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-name">Java</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div>
+        <div class="skill-level">Intermedio / Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">C++</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
+        <div class="skill-level">Intermedio / Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">Kotlin</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:82%"></div></div>
+        <div class="skill-level">Intermedio / Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">SQL</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:83%"></div></div>
+        <div class="skill-level">Intermedio / Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">Swift</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:78%"></div></div>
+        <div class="skill-level">Intermedio / Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">JavaScript</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:82%"></div></div>
+        <div class="skill-level">Intermedio / Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">HTML & CSS</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:92%; background: linear-gradient(90deg, var(--accent3), var(--accent))"></div></div>
+        <div class="skill-level">Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">Angular & Spring Boot</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div>
+        <div class="skill-level">Intermedio / Alto</div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-name">Git</div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%; background: linear-gradient(90deg, var(--accent2), var(--accent))"></div></div>
+        <div class="skill-level">Alto</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROYECTOS -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2>Proyectos</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+
+      <!-- ROBOT NASA - FEATURED -->
+      <div class="project-card featured reveal">
+        <div>
+          <span class="project-badge badge-gold">🏆 Ganador · Expoproyectos Javeriana 2025</span>
+          <h3 class="project-title">Robot Prototipo NASA</h3>
+          <p class="project-desc">Robot de concurso con integración de IA para seguimiento de objetos en tiempo real. Interfaz actualizable remotamente vía MQTT con bróker propio. Desarrollado para el concurso de la NASA y ganador de Expoproyectos Javeriana 2025.</p>
+          <div class="project-tags">
+            <span class="tag">IA / Computer Vision</span>
+            <span class="tag">MQTT</span>
+            <span class="tag">IoT</span>
+            <span class="tag">Real-time</span>
+            <span class="tag">Broker propio</span>
+          </div>
+        </div>
+        <div class="project-award">
+          <div class="award-icon">🏆</div>
+          <div class="award-text">Ganador<br>2025</div>
+        </div>
+      </div>
+
+      <!-- HOTEL -->
+      <div class="project-card reveal">
+        <span class="project-badge badge-blue">⭐ Nominado · Expoproyectos 2025</span>
+        <h3 class="project-title">Hotel Runa Sagrada</h3>
+        <p class="project-desc">Plataforma web completa para cadena hotelera con reservas, pagos, autenticación segura y base de datos H2.</p>
+        <div class="project-tags">
+          <span class="tag">Angular</span>
+          <span class="tag">Spring Boot</span>
+          <span class="tag">H2 DB</span>
+          <span class="tag">Auth</span>
+          <span class="tag">Pagos</span>
+        </div>
+      </div>
+
+      <!-- WAR OF WONDERS -->
+      <div class="project-card reveal">
+        <span class="project-badge badge-pink">⭐ Nominado · Expoproyectos 2025</span>
+        <h3 class="project-title">War of Wonders</h3>
+        <p class="project-desc">Juego móvil completo con tienda, sistema de amigos, chat, batallas y mapa en tiempo real sobre Firebase.</p>
+        <div class="project-tags">
+          <span class="tag">Kotlin</span>
+          <span class="tag">Firebase</span>
+          <span class="tag">Real-time</span>
+          <span class="tag">Mobile</span>
+        </div>
+      </div>
+
+      <!-- REDES -->
+      <div class="project-card reveal">
+        <span class="project-badge badge-green">Sistemas Operativos</span>
+        <h3 class="project-title">Publisher–Subscriber FIFO</h3>
+        <p class="project-desc">Sistema de comunicación con tuberías FIFO: publicadores envían noticias a suscriptores por categorías específicas.</p>
+        <div class="project-tags">
+          <span class="tag">C++</span>
+          <span class="tag">Pipes FIFO</span>
+          <span class="tag">OS</span>
+        </div>
+      </div>
+
+      <!-- IoT -->
+      <div class="project-card reveal">
+        <span class="project-badge badge-blue">Redes & IoT</span>
+        <h3 class="project-title">Red de Sensores ESP8266</h3>
+        <p class="project-desc">Red de sensores y actuadores con NODEMCU ESP8266 para comunicación y control en entornos embebidos.</p>
+        <div class="project-tags">
+          <span class="tag">ESP8266</span>
+          <span class="tag">NodeMCU</span>
+          <span class="tag">IoT</span>
+          <span class="tag">Redes</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCIA -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2>Experiencia</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="exp-card reveal">
+      <div class="exp-icon">🚚</div>
+      <div>
+        <h3 class="exp-title">Sistema de Administración de Guías</h3>
+        <p class="exp-company">Security Express · Logística</p>
+        <p class="exp-desc">Desarrollo y venta de sistema completo de administración de guías para la operación logística de la empresa. El sistema incluyó base de datos relacional, módulo de autenticación y panel de control funcional entregado en producción.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOFT SKILLS -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2>Habilidades</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="soft-grid">
+      <div class="soft-card reveal">
+        <div class="soft-icon">🎯</div>
+        <div class="soft-label">Constancia y finalización de proyectos</div>
+      </div>
+      <div class="soft-card reveal">
+        <div class="soft-icon">⚡</div>
+        <div class="soft-label">Aprendizaje rápido y adaptabilidad</div>
+      </div>
+      <div class="soft-card reveal">
+        <div class="soft-icon">🤝</div>
+        <div class="soft-label">Trabajo en equipo efectivo</div>
+      </div>
+      <div class="soft-card reveal">
+        <div class="soft-icon">🔐</div>
+        <div class="soft-label">Interés en ciberseguridad</div>
+      </div>
+      <div class="soft-card reveal">
+        <div class="soft-icon">💡</div>
+        <div class="soft-label">Soluciones creativas y originales</div>
+      </div>
+      <div class="soft-card reveal">
+        <div class="soft-icon">📋</div>
+        <div class="soft-label">Planeación meticulosa</div>
+      </div>
+      <div class="soft-card reveal">
+        <div class="soft-icon">💬</div>
+        <div class="soft-label">Amabilidad y tolerancia</div>
+      </div>
+      <div class="soft-card reveal">
+        <div class="soft-icon">🌎</div>
+        <div class="soft-label">Inglés B2 certificado · Javeriana</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCACIÓN -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2>Formación</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-card reveal">
+        <p class="edu-period">2023 – Actualidad</p>
+        <h3 class="edu-degree">Ingeniería de Sistemas</h3>
+        <p class="edu-inst">Pontificia Universidad Javeriana · Bogotá D.C.<br><br>Séptimo semestre. Múltiples proyectos nominados y ganadores en Expoproyectos 2025.</p>
+      </div>
+      <div class="edu-card reveal">
+        <p class="edu-period">Bachillerato</p>
+        <h3 class="edu-degree">Formación Secundaria</h3>
+        <p class="edu-inst">Gimnasio Obregón · Bogotá D.C.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p class="footer-name">Laura Juliana Garzón Arias</p>
+    <p class="footer-sub">Ingeniería de Sistemas · Pontificia Universidad Javeriana · Bogotá 2025</p>
+  </div>
+</footer>
+
+<script>
+  // Intersection observer for reveal animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Animate skill bars
+        const bar = entry.target.querySelector('.skill-bar-fill');
+        if (bar) {
+          entry.target.classList.add('visible');
+        }
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .skill-card').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Stagger delays for grids
+  document.querySelectorAll('.skills-grid .skill-card, .projects-grid .project-card, .soft-grid .soft-card').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 4) * 80}ms`;
+  });
+</script>
+</body>
+</html>
